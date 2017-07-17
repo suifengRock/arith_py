@@ -11,7 +11,7 @@ import (
 var legalArthmeticRegex string = `^(\d+(\.\d+)?|\+|\-|\*|\/|and|or|\(|\)|==|>=|<=|!=|>|<)+$`
 
 func main() {
-	test := "11+3*(2-4)/2"
+	test := "((11+3)*2-4)/2"
 	res, err := calculator(test)
 	if err != nil {
 		fmt.Println(err)
@@ -91,15 +91,15 @@ func suffixExpress(data string) []string {
 			queue.PushBack(number)
 			i = i + len(number)
 		case isOperate(s):
+
 			for e := stack.Front(); e != nil; {
 				if !isPriority(s, e.Value.(byte)) {
 					queue.PushBack(e.Value)
 					b := e
 					e = e.Next()
 					stack.Remove(b)
-
 				} else {
-					e = e.Next()
+					break
 				}
 			}
 			stack.PushFront(s)
@@ -108,8 +108,8 @@ func suffixExpress(data string) []string {
 			stack.PushFront(s)
 			i++
 		case s == ')':
-			leng := stack.Len()
-			for i := 0; i < leng; i++ {
+			stackLen := stack.Len()
+			for k := 0; k < stackLen; k++ {
 				e := stack.Front()
 				stack.Remove(e)
 				if e.Value.(byte) == '(' {
@@ -136,6 +136,9 @@ func suffixExpress(data string) []string {
 }
 
 func isPriority(a, b byte) bool {
+	if b == '(' {
+		return true
+	}
 	if a == '*' || a == '/' {
 		if b == '+' || b == '-' {
 			return true
